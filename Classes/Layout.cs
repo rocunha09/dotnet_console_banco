@@ -76,10 +76,10 @@ namespace dotnet_console_banco.Classes
             Console.WriteLine("                 Conta cadastrada com sucesso!           ");
             Console.WriteLine("                 =================================       ");
 
-            //aguarda 1.5 segundos
-            Thread.Sleep(1500);
-            //redireciona para area do cliente
-            areaDoCliente(pessoa);
+            //aguarda 0.5 segundos
+            Thread.Sleep(500);
+            //redireciona para area do cliente ou tela inicial
+            opcaoVoltar(pessoa);
         }
 
         private static Pessoa criarConta(string nome, string cpf, string senha)
@@ -142,15 +142,10 @@ namespace dotnet_console_banco.Classes
         private static void telaBoasVindas(Pessoa pessoa)
         {
             Console.WriteLine("                                                         ");
-            Console.WriteLine($"                Seja Bem Vindo, {pessoa.nome}           ");
+            Console.WriteLine($"                 Seja Bem Vindo, {pessoa.nome}          ");
             Console.WriteLine("                 =================================       ");
-            Console.WriteLine($"                Seus Dados: [Banco: {pessoa.Conta.GetCodigoDoBanco()}]");
+            Console.WriteLine($"            | Banco: {pessoa.Conta.GetCodigoDoBanco()} | Agência: {pessoa.Conta.GetNumeroAgencia()} | Conta: {pessoa.Conta.GetNumeroConta()} |");
             Console.WriteLine("                 =================================       ");
-            Console.WriteLine($"                Seus Dados: [Agência: {pessoa.Conta.GetNumeroAgencia()}]");
-            Console.WriteLine("                 =================================       ");
-            Console.WriteLine($"                Seus Dados: [Conta: {pessoa.Conta.GetNumeroConta()}]");
-            Console.WriteLine("                 =================================       ");
-            Console.WriteLine("                                                         ");
             Console.WriteLine("                                                         ");
         }
 
@@ -184,29 +179,29 @@ namespace dotnet_console_banco.Classes
 
             }    
 
-            opEscolhidaAreaCliente(opcao);
+            opEscolhidaAreaCliente(opcao, pessoa);
 
         }       
 
-        private static void opEscolhidaAreaCliente(int opcao)
+        private static void opEscolhidaAreaCliente(int opcao, Pessoa pessoa)
         {
             switch (opcao)
             {
                 case 1:
                     //realizar Depósito:
-                    
+                    telaDeposito(pessoa);
                     break;
                 case 2:
                     //realizar Saque:
-                    
+                    telaSaque(pessoa);
                     break;
                 case 3:
                     //Consultar Saldo:
-                    
+                    telaCconsultaSaldo(pessoa);
                     break;
                 case 4:
                     //Extrato:
-                    
+                    telaExtrato(pessoa);
                     break;
                 case 5:
                     //Sair
@@ -214,8 +209,184 @@ namespace dotnet_console_banco.Classes
                     break;
                 default:
                     Console.WriteLine("Opt invalida");
+                    Thread.Sleep(1500);
+                    TelaPrincipal();
                     break;
             }
+        }
+
+        private static void telaDeposito(Pessoa pessoa)
+        {
+            Console.Clear();
+            telaBoasVindas(pessoa);
+
+            Console.WriteLine("                 Digite o valor do Depósito:             ");
+            double valor = double.Parse(Console.ReadLine());
+            Console.WriteLine("                 =================================       ");
+
+            pessoa.Conta.Depositar(valor);
+            
+            Console.Clear();
+            telaBoasVindas(pessoa);
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("                 Depósito Realizado com Sucesso!         ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine();
+            Console.WriteLine();
+
+            Thread.Sleep(1500);
+
+            opcaoVoltarAreaCliente(pessoa);
+
+        }
+
+        private static void telaSaque(Pessoa pessoa)
+        {
+            Console.Clear();
+            telaBoasVindas(pessoa);
+
+            Console.WriteLine("                 Digite o valor do Saque:                ");
+            double valor = double.Parse(Console.ReadLine());
+            Console.WriteLine("                 =================================       ");
+
+            bool result = pessoa.Conta.Sacar(valor);
+            
+            Console.Clear();
+            telaBoasVindas(pessoa);
+
+            Console.WriteLine();
+            Console.WriteLine();
+            if(result){
+                Console.WriteLine("                 Saque Realizado com Sucesso!            ");
+                Console.WriteLine("                 =================================       ");
+
+            } else {
+                Console.WriteLine("                 Saldo insuficiente!                     ");
+                Console.WriteLine("                 =================================       ");
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+
+            Thread.Sleep(1500);
+
+            Console.Clear();
+            opcaoVoltarAreaCliente(pessoa);
+
+        }
+
+        private static void telaCconsultaSaldo(Pessoa pessoa)
+        {
+            Console.Clear();
+            telaBoasVindas(pessoa);
+
+            Console.WriteLine("                 Seu Saldo é:                            ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine($"                R$ {pessoa.Conta.ConsultarSaldo()}");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine();
+            Console.WriteLine();
+
+            opcaoVoltarAreaCliente(pessoa);
+
+        }
+       
+        private static void telaExtrato(Pessoa pessoa)
+        {
+            Console.Clear();
+            telaBoasVindas(pessoa);
+            
+            //monta extrato a partir de um histórico de movimentações...
+            if(pessoa.Conta.Extrato().Any()){
+                Console.WriteLine("                  Extrato:                                                                  ");
+                Console.WriteLine("                 ===================================================================        ");
+                foreach (Extrato extrato in pessoa.Conta.Extrato())
+                {
+                    Console.WriteLine($"                 Data: {extrato.data.ToString("dd/MM/yyyy HH:mm:ss")}    Movimentação: {extrato.descricao}   Valor: {extrato.valor}      ");
+                    Console.WriteLine("                 ---------------------------------------------------------------        ");
+                }
+                
+                double saldoAtual = pessoa.Conta.Extrato().Sum(x => x.valor);
+                
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("                  Saldo Atual:                                  ");
+                Console.WriteLine("                 ===================================================================       ");
+                 Console.WriteLine($"                                       {saldoAtual}                                      ");
+                Console.WriteLine("                 ===================================================================       ");
+                Console.WriteLine();
+                Console.WriteLine();
+            } else {
+                Console.WriteLine("                 Não há Movimentações:                   ");
+                Console.WriteLine("                 =================================       ");
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+
+            Thread.Sleep(1500);
+
+            opcaoVoltarAreaCliente(pessoa);
+        }
+        
+        private static void opcaoVoltarAreaCliente(Pessoa pessoa)
+        {
+            //reseta menu
+            opcao = 0;
+
+            Console.WriteLine("                                                         ");
+            Console.WriteLine("                 Digite a opção desejada:                ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 1 - Voltar para minha conta             ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 2 - Sair                                ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                                                         ");
+
+            while(opcao == 0)
+            {
+                opcao = int.Parse(Console.ReadLine());
+
+            }    
+
+            if(opcao == 1){
+                areaDoCliente(pessoa);
+
+            } else {
+                TelaPrincipal();
+            }
+
+        }
+
+        private static void opcaoVoltar(Pessoa pessoa)
+        {
+            //reseta menu
+            opcao = 0;
+
+
+            Console.WriteLine("                                                         ");
+            Console.WriteLine("                                                         ");
+            Console.WriteLine("                                                         ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 1 - Acessar Conta                       ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 2 - Sair                                ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                                                         ");
+
+            while(opcao == 0)
+            {
+                opcao = int.Parse(Console.ReadLine());
+
+            }    
+
+            if(opcao == 1){
+                areaDoCliente(pessoa);
+
+            } else {
+                TelaPrincipal();
+            }
+
         }
     }
  
