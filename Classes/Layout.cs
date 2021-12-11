@@ -5,9 +5,11 @@ namespace dotnet_console_banco.Classes
     {
         private static List<Pessoa> pessoas = new List<Pessoa>();
         private static int opcao = 0;
+
         public static void TelaPrincipal()
         {
-            //Console.BackgroundColor = ConsoleColor.Blue;
+            //reseta menu
+            opcao = 0;
 
             Console.Clear();
 
@@ -73,6 +75,11 @@ namespace dotnet_console_banco.Classes
             Console.Clear();
             Console.WriteLine("                 Conta cadastrada com sucesso!           ");
             Console.WriteLine("                 =================================       ");
+
+            //aguarda 1.5 segundos
+            Thread.Sleep(1500);
+            //redireciona para area do cliente
+            areaDoCliente(pessoa);
         }
 
         private static Pessoa criarConta(string nome, string cpf, string senha)
@@ -93,8 +100,8 @@ namespace dotnet_console_banco.Classes
             Console.Clear();
 
             Console.WriteLine(" _Entre com seus dados para acessar sua conta:           ");
-            Console.WriteLine("                 Digite o número da conta:               ");
-            string conta = Console.ReadLine();
+            Console.WriteLine("                 Digite o número do CPF:                 ");
+            string cpf = Console.ReadLine();
             Console.WriteLine("                 =================================       ");
             Console.WriteLine("                 Digite a Senha:                         ");
             string senha = Console.ReadLine();
@@ -102,7 +109,113 @@ namespace dotnet_console_banco.Classes
             Console.WriteLine("                                                         ");
 
             //chama o método que vai realizar o login...
-            Console.WriteLine($"\nnome: {conta}, cpf: {senha}");
+            Pessoa pessoa = buscarConta(cpf, senha);
+
+            if (pessoa != null){
+                //redireciona para área do cliente
+               areaDoCliente(pessoa);
+
+            } else {
+                Console.Clear();
+                Console.WriteLine("                 Pessoa não cadastrada!                  ");
+                Console.WriteLine("                 =================================       ");
+                Console.WriteLine();
+                Console.WriteLine();
+
+                //aguarda 1.5 segundos
+                Thread.Sleep(1500);
+                //redireciona para o inicio
+                TelaPrincipal();
+            }
+        }
+
+        private static Pessoa buscarConta(string cpf, string senha)
+        {
+            Pessoa pessoa = pessoas.FirstOrDefault( x =>
+                x.cpf == cpf &&
+                x.senha == senha
+            );
+
+            return pessoa;
+        }
+
+        private static void telaBoasVindas(Pessoa pessoa)
+        {
+            Console.WriteLine("                                                         ");
+            Console.WriteLine($"                Seja Bem Vindo, {pessoa.nome}           ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine($"                Seus Dados: [Banco: {pessoa.Conta.GetCodigoDoBanco()}]");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine($"                Seus Dados: [Agência: {pessoa.Conta.GetNumeroAgencia()}]");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine($"                Seus Dados: [Conta: {pessoa.Conta.GetNumeroConta()}]");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                                                         ");
+            Console.WriteLine("                                                         ");
+        }
+
+        private static void areaDoCliente(Pessoa pessoa)
+        {
+            //reseta menu
+            opcao = 0;
+
+            Console.Clear();
+
+            telaBoasVindas(pessoa);
+
+            Console.WriteLine("                                                         ");
+            Console.WriteLine("                 Digite a opção desejada:                ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 1 - Realizar um Depósito                ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 2 - Realizar um Saque                   ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 3 - Consultar Saldo                     ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 4 - Extrato                             ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 5 - Sair                                ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                                                         ");
+
+            while(opcao == 0)
+            {
+                opcao = int.Parse(Console.ReadLine());
+
+            }    
+
+            opEscolhidaAreaCliente(opcao);
+
+        }       
+
+        private static void opEscolhidaAreaCliente(int opcao)
+        {
+            switch (opcao)
+            {
+                case 1:
+                    //realizar Depósito:
+                    
+                    break;
+                case 2:
+                    //realizar Saque:
+                    
+                    break;
+                case 3:
+                    //Consultar Saldo:
+                    
+                    break;
+                case 4:
+                    //Extrato:
+                    
+                    break;
+                case 5:
+                    //Sair
+                    TelaPrincipal();
+                    break;
+                default:
+                    Console.WriteLine("Opt invalida");
+                    break;
+            }
         }
     }
  

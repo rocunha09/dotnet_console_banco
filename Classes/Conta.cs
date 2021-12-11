@@ -9,7 +9,7 @@ namespace dotnet_console_banco.Classes
         public static int numeroDaContaSequencial {get; private set;}
         public Conta()
         {
-            this.NumeroConta = "0001";
+            this.numeroAgencia = "0001";
             Conta.numeroDaContaSequencial++;
         }
 
