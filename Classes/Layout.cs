@@ -1,7 +1,9 @@
+using dotnet_console_banco.Classes;
 namespace dotnet_console_banco.Classes
 {
     public class Layout
     {
+        private static List<Pessoa> pessoas = new List<Pessoa>();
         private static int opcao = 0;
         public static void TelaPrincipal()
         {
@@ -62,9 +64,28 @@ namespace dotnet_console_banco.Classes
             Console.WriteLine("                 =================================       ");
             Console.WriteLine("                                                         ");
 
-
             //chama o método que vai criar conta do usuário...
-            Console.WriteLine($"\nnome: {nome}, cpf: {cpf}, senha: {senha}");
+            Pessoa pessoa = criarConta(nome, cpf, senha);
+
+            //adiciona na lista de pessoas cadastradas...
+            pessoas.Add(pessoa);
+
+            Console.Clear();
+            Console.WriteLine("                 Conta cadastrada com sucesso!           ");
+            Console.WriteLine("                 =================================       ");
+        }
+
+        private static Pessoa criarConta(string nome, string cpf, string senha)
+        {
+            Pessoa pessoa = new Pessoa();
+            ContaCorrente contaCorrente = new ContaCorrente();
+
+            pessoa.setNome(nome);
+            pessoa.setCpf(cpf);
+            pessoa.setSenha(senha);
+            pessoa.Conta = contaCorrente;
+
+            return pessoa;
         }
 
         private static void TelaEntrar()
