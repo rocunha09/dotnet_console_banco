@@ -1,4 +1,6 @@
 using dotnet_console_banco.Classes;
+using dotnet_console_banco.Enum;
+
 namespace dotnet_console_banco.Classes
 {
     public class Layout
@@ -46,6 +48,8 @@ namespace dotnet_console_banco.Classes
                     break;
                 default:
                     Console.WriteLine("Opt invalida");
+                    Thread.Sleep(1000);
+                    TelaPrincipal();
                     break;
             }
         }
@@ -58,8 +62,30 @@ namespace dotnet_console_banco.Classes
             Console.WriteLine("                 Digite seu Nome:                        ");
             string nome = Console.ReadLine();
             Console.WriteLine("                 =================================       ");
-            Console.WriteLine("                 Digite seu CPF:                         ");
-            string cpf = Console.ReadLine();
+            Console.WriteLine("                 Entre com o Tipo da sua Conta:          ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 1 - Pessoa Física:                      ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 2 - Pessoa Jurídica:                    ");
+            Console.WriteLine("                 =================================       ");
+            int tipo = int.Parse(Console.ReadLine());
+            Console.WriteLine("                 =================================       ");
+            
+            string documento = "";
+            if(tipo == 1){
+                Console.WriteLine("                 Digite seu CPF:                         ");
+                documento = Console.ReadLine();
+
+            } else if(tipo == 2){
+                Console.WriteLine("                 Digite seu CNPJ:                         ");
+                documento = Console.ReadLine();
+            } else {
+                Console.WriteLine("                 Opção Inválida:                         ");
+                Thread.Sleep(1000);
+                TelaPrincipal();
+            }
+            
+            
             Console.WriteLine("                 =================================       ");
             Console.WriteLine("                 Digite sua Senha:                       ");
             string senha = Console.ReadLine();
@@ -67,7 +93,7 @@ namespace dotnet_console_banco.Classes
             Console.WriteLine("                                                         ");
 
             //chama o método que vai criar conta do usuário...
-            Pessoa pessoa = criarConta(nome, cpf, senha);
+            Pessoa pessoa = criarConta(nome, documento, tipo,  senha);
 
             //adiciona na lista de pessoas cadastradas...
             pessoas.Add(pessoa);
@@ -82,15 +108,17 @@ namespace dotnet_console_banco.Classes
             opcaoVoltar(pessoa);
         }
 
-        private static Pessoa criarConta(string nome, string cpf, string senha)
+        private static Pessoa criarConta(string nome, string documento, int tipo, string senha)
         {
+            TipoConta tipoConta;
             Pessoa pessoa = new Pessoa();
             ContaCorrente contaCorrente = new ContaCorrente();
 
             pessoa.setNome(nome);
-            pessoa.setCpf(cpf);
+            pessoa.setCpf(documento);
             pessoa.setSenha(senha);
             pessoa.Conta = contaCorrente;
+            pessoa.Conta.selecionarTipoConta((TipoConta)tipo);
 
             return pessoa;
         }
@@ -141,10 +169,17 @@ namespace dotnet_console_banco.Classes
 
         private static void telaBoasVindas(Pessoa pessoa)
         {
+            string tipoConta ;
+            if(pessoa.Conta.GetTipoConta() == TipoConta.PessoaFisica){
+                tipoConta = "Pessoa Física";
+            } else {
+                tipoConta = "Pessoa Jurídica";
+            }
+
             Console.WriteLine("                                                         ");
             Console.WriteLine($"                 Seja Bem Vindo, {pessoa.nome}          ");
             Console.WriteLine("                 =================================       ");
-            Console.WriteLine($"            | Banco: {pessoa.Conta.GetCodigoDoBanco()} | Agência: {pessoa.Conta.GetNumeroAgencia()} | Conta: {pessoa.Conta.GetNumeroConta()} |");
+            Console.WriteLine($"      | Banco: {pessoa.Conta.GetCodigoDoBanco()} | Agência: {pessoa.Conta.GetNumeroAgencia()} | Conta: {pessoa.Conta.GetNumeroConta()} | Tipo da sua Conta: {tipoConta}");
             Console.WriteLine("                 =================================       ");
             Console.WriteLine("                                                         ");
         }

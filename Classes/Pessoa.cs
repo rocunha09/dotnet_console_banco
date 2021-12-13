@@ -1,3 +1,4 @@
+using dotnet_console_banco.Enum;
 using dotnet_console_banco.Interfaces;
 namespace dotnet_console_banco.Classes
 {
@@ -8,7 +9,6 @@ namespace dotnet_console_banco.Classes
         public string senha {get; private set;}
         public IConta Conta {get; set;}
     
-
         public void setNome(string nome)
         {
             this.nome = nome;

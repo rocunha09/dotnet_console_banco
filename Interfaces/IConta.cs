@@ -1,5 +1,7 @@
 
 using dotnet_console_banco.Classes;
+using dotnet_console_banco.Enum;
+
 namespace dotnet_console_banco.Interfaces;
 
 public interface IConta
@@ -10,5 +12,10 @@ public interface IConta
     string GetCodigoDoBanco();
     string GetNumeroAgencia();
     string GetNumeroConta();
-    public List<Extrato> Extrato();
+    List<Extrato> Extrato();
+    double GetCredito();
+    void DefinirLimiteDeCredito(double credito);
+    void selecionarTipoConta(TipoConta tipoConta);
+    TipoConta GetTipoConta();
+
 }
