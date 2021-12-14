@@ -200,11 +200,13 @@ namespace dotnet_console_banco.Classes
             Console.WriteLine("                 =================================       ");
             Console.WriteLine("                 2 - Realizar um Saque                   ");
             Console.WriteLine("                 =================================       ");
-            Console.WriteLine("                 3 - Consultar Saldo                     ");
+            Console.WriteLine("                 3 - Realizar Transferência              ");
             Console.WriteLine("                 =================================       ");
-            Console.WriteLine("                 4 - Extrato                             ");
+            Console.WriteLine("                 4 - Consultar Saldo                     ");
             Console.WriteLine("                 =================================       ");
-            Console.WriteLine("                 5 - Sair                                ");
+            Console.WriteLine("                 5 - Extrato                             ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 6 - Sair                                ");
             Console.WriteLine("                 =================================       ");
             Console.WriteLine("                                                         ");
 
@@ -231,14 +233,18 @@ namespace dotnet_console_banco.Classes
                     telaSaque(pessoa);
                     break;
                 case 3:
+                    //realizar transferência
+                    telaTransferir(pessoa);
+                    break;
+                case 4:
                     //Consultar Saldo:
                     telaCconsultaSaldo(pessoa);
                     break;
-                case 4:
+                case 5:
                     //Extrato:
                     telaExtrato(pessoa);
                     break;
-                case 5:
+                case 6:
                     //Sair
                     TelaPrincipal();
                     break;
@@ -307,6 +313,70 @@ namespace dotnet_console_banco.Classes
             Thread.Sleep(1500);
 
             Console.Clear();
+            opcaoVoltarAreaCliente(pessoa);
+
+        }
+        private static void telaTransferir(Pessoa pessoa)
+        {
+            Console.Clear();
+            telaBoasVindas(pessoa);
+            
+            //verifica se a pessoa tem permissão para transferir
+            //a verificação é feita procurando a existência do método dentro da classe
+            //caso exista ele permite a transferência, caso não exista ele informa e retorna ao menu inicial
+            
+            //Object tipoContaorigem = pessoa.Conta.GetType();
+            //Console.WriteLine(tipoContaorigem);
+
+            // if(pessoa.Conta.GetMethod("Transferir")){
+            //     Console.WriteLine("esta conta é uma conta corrente...");
+
+            // } else {
+            //     Console.WriteLine("deu else, não entendeu que é uma conta corrente");
+                
+            // }
+            string podeTransferir = "não";
+
+            if(podeTransferir == "sim"){
+
+                Console.WriteLine("                 Digite o valor do a ser Transferido:    ");
+                double valor = double.Parse(Console.ReadLine());
+                Console.WriteLine("                 =================================       ");
+
+                string[] result = new string[2] {"Erro", "função não implementada"};// pessoa.Conta.Transferir(valor);
+                
+                Console.Clear();
+                telaBoasVindas(pessoa);
+
+                Console.WriteLine();
+                Console.WriteLine();
+
+                if(result[0] == "true"){
+                    Console.WriteLine($"                 {result[1]}");
+                    Console.WriteLine("                 =================================       ");
+
+                } else if (result[0] == "Erro Conta Destino"){
+                    Console.WriteLine($"                 {result[1]}");
+                    Console.WriteLine("                 =================================       ");
+                    Console.WriteLine();
+                    Console.WriteLine();
+                
+                } else if(result[0] == "Erro Conta Origem"){
+                    Console.WriteLine($"                 {result[1]}");
+                    Console.WriteLine("                 =================================       "); 
+                    Console.WriteLine();
+                    Console.WriteLine();
+            
+                } 
+            } else {
+                Console.WriteLine("                 Esta conta não possui esta função       ");
+                Console.WriteLine("                 =================================       ");
+            }
+
+            
+
+            Thread.Sleep(1500);
+
             opcaoVoltarAreaCliente(pessoa);
 
         }
