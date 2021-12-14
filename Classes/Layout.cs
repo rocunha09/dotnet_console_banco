@@ -265,6 +265,16 @@ namespace dotnet_console_banco.Classes
             double valor = double.Parse(Console.ReadLine());
             Console.WriteLine("                 =================================       ");
 
+            //valida dado
+            while(valor <= 0){
+                Console.WriteLine("                 O valor do Depósito Inválido!           ");
+                Console.WriteLine("                 =================================       ");
+                
+                Thread.Sleep(1000);
+                opcaoVoltarAreaCliente(pessoa);
+            }
+
+
             pessoa.Conta.Depositar(valor);
             
             Console.Clear();
@@ -278,7 +288,6 @@ namespace dotnet_console_banco.Classes
             Console.WriteLine();
 
             Thread.Sleep(1500);
-
             opcaoVoltarAreaCliente(pessoa);
 
         }
@@ -293,20 +302,25 @@ namespace dotnet_console_banco.Classes
             Console.WriteLine("                 =================================       ");
 
             bool result = pessoa.Conta.Sacar(valor);
-            
-            Console.Clear();
-            telaBoasVindas(pessoa);
 
-            Console.WriteLine();
-            Console.WriteLine();
-            if(result){
+             //mensagem de retorno
+            if(!result){
+                Console.Clear();
+                Console.WriteLine("                 Saldo insuficiente                      ");
+                Console.WriteLine("                 =================================       ");
+                
+            } else {
+            
+                Console.Clear();
+                telaBoasVindas(pessoa);
+
+                Console.WriteLine();
+                Console.WriteLine();
                 Console.WriteLine("                 Saque Realizado com Sucesso!            ");
                 Console.WriteLine("                 =================================       ");
 
-            } else {
-                Console.WriteLine("                 Saldo insuficiente!                     ");
-                Console.WriteLine("                 =================================       ");
             }
+
             Console.WriteLine();
             Console.WriteLine();
 

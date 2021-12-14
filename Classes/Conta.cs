@@ -19,21 +19,38 @@ namespace dotnet_console_banco.Classes
         }
         public void Depositar(double valor)
         {
-            if(valor >= 0){
+            if(valor > 0){
             this.saldo += valor;
             DateTime dataAtual = DateTime.Now;
             this.movimentacoes.Add(new Extrato(dataAtual, "Depósito", valor));
-            }
+            } 
         }
         public bool Sacar(double valor)
         {
-            if(valor <= ConsultarSaldo()){
-                this.saldo -= valor;
+            double saldoDisponivelComCredito = this.saldo + this.credito;
+            double saldoDisponivel = this.saldo;
+
+            if(valor > saldoDisponivelComCredito){
+                return false;
+                
+            } else if(valor > saldoDisponivel){
+                double limiteRestante = valor - saldoDisponivel;
+                this.saldo = Math.Round(0 - limiteRestante, 2);
+                limiteRestante = Math.Round(this.credito - limiteRestante, 2);
+                
                 DateTime dataAtual = DateTime.Now;
                 this.movimentacoes.Add(new Extrato(dataAtual, "Saque", -valor));
+
                 return true;
+
             } else {
-                return false;
+                this.saldo -= valor;
+
+                DateTime dataAtual = DateTime.Now;
+                this.movimentacoes.Add(new Extrato(dataAtual, "Saque", -valor));
+
+                return true;
+
             }
 
         }
