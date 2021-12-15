@@ -40,6 +40,7 @@ Foi Desenvolvido com maior "aprofundamento" diversas outras funcionalidades como
 - A Aplicação certamente pode ser aprimorada.
 - Como Exemplo do exposto acima: melhorias na navegação(aplicando mais POO e acabamento), melhor uso de orientação a objetos quanto a herança, criação de novos tipos de contas, Formatação de valores durante a impressão, etc.
 - Partindo do exposto acima evite uso de entradas de valores com pontos flutuantes, dependendo do ambiente que estiver rodando a aplicação pode resultar em erros, algo que será revisto.
+- Aplicação realizada usando .NET 6.0, desenvolvida usando como ambiente de desenvolvimento Linux ubuntu.
 
 
 `#Dio` `#DigitalInovationOne` `#dotnet` `#POO` `ConsoleApplication` `#bootcamp` `#dotnet fundamentals`
