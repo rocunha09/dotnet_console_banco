@@ -61,34 +61,65 @@ namespace dotnet_console_banco.Classes
             Console.WriteLine(" _Entre com seus dados para criar uma nova Conta:        ");
             Console.WriteLine("                 Digite seu Nome:                        ");
             string nome = Console.ReadLine();
-            Console.WriteLine("                 =================================       ");
-            Console.WriteLine("                 Entre com o Tipo da sua Conta:          ");
-            Console.WriteLine("                 =================================       ");
-            Console.WriteLine("                 1 - Pessoa Física:                      ");
-            Console.WriteLine("                 =================================       ");
-            Console.WriteLine("                 2 - Pessoa Jurídica:                    ");
-            Console.WriteLine("                 =================================       ");
-            int tipo = int.Parse(Console.ReadLine());
+
+            while(nome.Length  < 3){
+                Console.Clear();
+                Console.WriteLine("                 Nome deve ter pelo menos 3 caracteres:  ");
+                Console.WriteLine("                 =================================       ");
+                Thread.Sleep(1500);
+                TelaCriarConta();
+            }
+
+            int tipo = 0;
+
+            do {
+                Console.Clear();
+                Console.WriteLine("                 =================================       ");
+                Console.WriteLine("                 Entre com o Tipo da sua Conta:          ");
+                Console.WriteLine("                 =================================       ");
+                Console.WriteLine("                 1 - Pessoa Física:                      ");
+                Console.WriteLine("                 =================================       ");
+                Console.WriteLine("                 2 - Pessoa Jurídica:                    ");
+                Console.WriteLine("                 =================================       ");
+
+                tipo = int.Parse(Console.ReadLine());
+            
+            } while(tipo  < 1 || tipo > 2 || tipo.GetType() != typeof(int));            
+
             Console.WriteLine("                 =================================       ");
             
             string documento = "";
             if(tipo == 1){
-                Console.WriteLine("                 Digite seu CPF:                         ");
-                documento = Console.ReadLine();
+                
+
+                do{
+                    Console.Clear();
+                    Console.WriteLine("                 Digite seu CPF:                         ");
+                    documento = Console.ReadLine();
+
+                }while(documento.Length < 5);
 
             } else if(tipo == 2){
-                Console.WriteLine("                 Digite seu CNPJ:                         ");
-                documento = Console.ReadLine();
-            } else {
-                Console.WriteLine("                 Opção Inválida:                         ");
-                Thread.Sleep(1000);
-                TelaPrincipal();
-            }
-            
+                do{
+                    Console.Clear();
+                    Console.WriteLine("                 Digite seu CNPJ:                         ");
+                    documento = Console.ReadLine();
+
+                }while(documento.Length < 5);
+                
+            }            
             
             Console.WriteLine("                 =================================       ");
-            Console.WriteLine("                 Digite sua Senha:                       ");
-            string senha = Console.ReadLine();
+            
+            string senha = "";
+            
+            do{
+                Console.Clear();
+                Console.WriteLine("                 Digite sua Senha:                       ");
+                senha = Console.ReadLine();
+
+            }while(senha.Length < 3 || senha == "");
+
             Console.WriteLine("                 =================================       ");
             Console.WriteLine("                                                         ");
 
@@ -112,7 +143,7 @@ namespace dotnet_console_banco.Classes
         {
             TipoConta tipoConta;
             Pessoa pessoa = new Pessoa();
-            ContaCorrente contaCorrente = new ContaCorrente();
+            ContaCorrente contaCorrente = new ContaCorrente(500);
 
             pessoa.setNome(nome);
             pessoa.setCpf(documento);
@@ -248,6 +279,9 @@ namespace dotnet_console_banco.Classes
                     //Sair
                     TelaPrincipal();
                     break;
+                case 10:
+                    listarContas(pessoas, pessoa);
+                    break;
                 default:
                     Console.WriteLine("Opt invalida");
                     Thread.Sleep(1500);
@@ -330,34 +364,27 @@ namespace dotnet_console_banco.Classes
             opcaoVoltarAreaCliente(pessoa);
 
         }
+        
         private static void telaTransferir(Pessoa pessoa)
         {
             Console.Clear();
             telaBoasVindas(pessoa);
             
-            //verifica se a pessoa tem permissão para transferir
-            //a verificação é feita procurando a existência do método dentro da classe
-            //caso exista ele permite a transferência, caso não exista ele informa e retorna ao menu inicial
-            
-            //Object tipoContaorigem = pessoa.Conta.GetType();
-            //Console.WriteLine(tipoContaorigem);
-
-            // if(pessoa.Conta.GetMethod("Transferir")){
-            //     Console.WriteLine("esta conta é uma conta corrente...");
-
-            // } else {
-            //     Console.WriteLine("deu else, não entendeu que é uma conta corrente");
-                
-            // }
-            string podeTransferir = "não";
-
-            if(podeTransferir == "sim"){
+            if(pessoa.Conta.GetType() == typeof(ContaCorrente)){
 
                 Console.WriteLine("                 Digite o valor do a ser Transferido:    ");
                 double valor = double.Parse(Console.ReadLine());
                 Console.WriteLine("                 =================================       ");
 
-                string[] result = new string[2] {"Erro", "função não implementada"};// pessoa.Conta.Transferir(valor);
+                Console.WriteLine("                 Digite o numero da conta de Destino:    ");
+                 string contaDestino = Console.ReadLine();
+                Console.WriteLine("                 =================================       ");
+
+                //verifica se a conta existe na lista
+                //instancia a conta...
+                Pessoa p = pessoas.FirstOrDefault( x =>x.Conta.GetNumeroConta() == contaDestino);
+                
+                string[] result = pessoa.Conta.Transferir(valor, p);
                 
                 Console.Clear();
                 telaBoasVindas(pessoa);
@@ -387,14 +414,12 @@ namespace dotnet_console_banco.Classes
                 Console.WriteLine("                 =================================       ");
             }
 
-            
-
             Thread.Sleep(1500);
 
             opcaoVoltarAreaCliente(pessoa);
 
         }
-
+        
         private static void telaCconsultaSaldo(Pessoa pessoa)
         {
             Console.Clear();
@@ -404,13 +429,17 @@ namespace dotnet_console_banco.Classes
             Console.WriteLine("                 =================================       ");
             Console.WriteLine($"                R$ {pessoa.Conta.ConsultarSaldo()}");
             Console.WriteLine("                 =================================       ");
+            Console.WriteLine("                 Saldo + Crédito:                        ");
+            Console.WriteLine("                 =================================       ");
+            Console.WriteLine($"                R$ {pessoa.Conta.ConsultarSaldo()} + {pessoa.Conta.GetCredito()} = {pessoa.Conta.ConsultarSaldo() + pessoa.Conta.GetCredito()}");
+            Console.WriteLine("                 =================================       ");
             Console.WriteLine();
             Console.WriteLine();
 
             opcaoVoltarAreaCliente(pessoa);
 
-        }
-       
+        }    
+        
         private static void telaExtrato(Pessoa pessoa)
         {
             Console.Clear();
@@ -427,18 +456,23 @@ namespace dotnet_console_banco.Classes
                 }
                 
                 double saldoAtual = pessoa.Conta.Extrato().Sum(x => x.valor);
+                double creditoAtual = pessoa.Conta.GetCredito();
                 
                 Console.WriteLine();
                 Console.WriteLine();
-                Console.WriteLine("                  Saldo Atual:                                  ");
+                Console.WriteLine("                    Saldo Atual:                                  ");
                 Console.WriteLine("                 ===================================================================       ");
-                 Console.WriteLine($"                                       {saldoAtual}                                      ");
+                Console.WriteLine($"                                      R$ {saldoAtual}                                     ");
+                Console.WriteLine("                 ===================================================================       ");
+                Console.WriteLine("                   Saldo + Crédito:                        ");
+                Console.WriteLine("                 ===================================================================       ");
+                Console.WriteLine($"                  R$ {saldoAtual} + {creditoAtual} = {saldoAtual + creditoAtual}");
                 Console.WriteLine("                 ===================================================================       ");
                 Console.WriteLine();
                 Console.WriteLine();
             } else {
                 Console.WriteLine("                 Não há Movimentações:                   ");
-                Console.WriteLine("                 =================================       ");
+                Console.WriteLine("                 ===================================================================       ");
                 Console.WriteLine();
                 Console.WriteLine();
             }
@@ -446,7 +480,7 @@ namespace dotnet_console_banco.Classes
             Thread.Sleep(1500);
 
             opcaoVoltarAreaCliente(pessoa);
-        }
+        }      
         
         private static void opcaoVoltarAreaCliente(Pessoa pessoa)
         {
@@ -476,7 +510,7 @@ namespace dotnet_console_banco.Classes
             }
 
         }
-
+        
         private static void opcaoVoltar(Pessoa pessoa)
         {
             //reseta menu
@@ -506,6 +540,20 @@ namespace dotnet_console_banco.Classes
                 TelaPrincipal();
             }
 
+        }
+    
+        private static void listarContas(List<Pessoa> pessoas, Pessoa pessoa)
+        {
+                Console.Clear();
+                Console.WriteLine("");
+                Console.WriteLine("");
+                Console.WriteLine("");
+            foreach (Pessoa p in pessoas)
+            {
+                Console.WriteLine($"----------Pessoa: {p.nome}   Número da Conta:{p.Conta.GetNumeroConta()}   Saldo: R${p.Conta.ConsultarSaldo()}");
+            }
+            Thread.Sleep(1000);
+            opcaoVoltarAreaCliente(pessoa);
         }
     }
  

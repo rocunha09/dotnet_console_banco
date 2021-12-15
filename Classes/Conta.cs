@@ -17,13 +17,16 @@ namespace dotnet_console_banco.Classes
             Conta.numeroDaContaSequencial++;
             this.movimentacoes = new List<Extrato>();
         }
-        public void Depositar(double valor)
+        public bool Depositar(double valor)
         {
             if(valor > 0){
             this.saldo += valor;
             DateTime dataAtual = DateTime.Now;
             this.movimentacoes.Add(new Extrato(dataAtual, "Depósito", valor));
-            } 
+            return true;
+            } else {
+                return false;
+            }
         }
         public bool Sacar(double valor)
         {
@@ -90,5 +93,35 @@ namespace dotnet_console_banco.Classes
         {
             this.credito = credito;
         }
-    }
+    
+        public string[] Transferir(double valor, Pessoa contaDestino)
+            {
+                string[] result = new string[2];
+
+                if(this.Sacar(valor)){
+
+                    if(contaDestino.Conta.Depositar(valor)){          //aqui devo passar a instância de conta...
+                        result[0] = "true";
+                        result[1] = "Transferência realizada com sucesso";
+
+                        return result;
+
+                    } else {
+                        this.Extornar(valor);
+                        result[0] = "Erro Conta Destino";
+                        result[1] = "Erro[Conta Destino] ao tentar realizar transferência";
+                        return result;
+                    }
+
+                } else {
+                    result[0] = "Erro Conta Origem";
+                    result[1] = "Saldo Insuficiente";
+                    return result;
+                }
+            }
+            private void Extornar(double valor)
+        {
+            this.Depositar(valor);
+        }
+        }
 }

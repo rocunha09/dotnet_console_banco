@@ -6,7 +6,7 @@ namespace dotnet_console_banco.Interfaces;
 
 public interface IConta
 {
-    void Depositar(double valor);
+    bool Depositar(double valor);
     bool Sacar(double valor);
     double ConsultarSaldo();
     string GetCodigoDoBanco();
@@ -17,5 +17,7 @@ public interface IConta
     void DefinirLimiteDeCredito(double credito);
     void selecionarTipoConta(TipoConta tipoConta);
     TipoConta GetTipoConta();
+
+    string[] Transferir(double valor, Pessoa p);
 
 }
