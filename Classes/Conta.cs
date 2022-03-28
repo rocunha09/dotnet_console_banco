@@ -19,12 +19,15 @@ namespace dotnet_console_banco.Classes
         }
         public bool Depositar(double valor)
         {
-            if(valor > 0){
-            this.saldo += valor;
-            DateTime dataAtual = DateTime.Now;
-            this.movimentacoes.Add(new Extrato(dataAtual, "Depósito", valor));
-            return true;
-            } else {
+            if(valor > 0)
+            {
+                this.saldo += valor;
+                DateTime dataAtual = DateTime.Now;
+                this.movimentacoes.Add(new Extrato(dataAtual, "Depósito", valor));
+                return true;
+            }
+            else
+            {
                 return false;
             }
         }
@@ -33,29 +36,27 @@ namespace dotnet_console_banco.Classes
             double saldoDisponivelComCredito = this.saldo + this.credito;
             double saldoDisponivel = this.saldo;
 
-            if(valor > saldoDisponivelComCredito){
+            if(valor > saldoDisponivelComCredito)
+            {
                 return false;
-                
-            } else if(valor > saldoDisponivel){
+            }
+            else if(valor > saldoDisponivel)
+            {
                 double limiteRestante = valor - saldoDisponivel;
                 this.saldo = Math.Round(0 - limiteRestante, 2);
                 limiteRestante = Math.Round(this.credito - limiteRestante, 2);
-                
                 DateTime dataAtual = DateTime.Now;
                 this.movimentacoes.Add(new Extrato(dataAtual, "Saque", -valor));
-
-                return true;
-
-            } else {
-                this.saldo -= valor;
-
-                DateTime dataAtual = DateTime.Now;
-                this.movimentacoes.Add(new Extrato(dataAtual, "Saque", -valor));
-
                 return true;
 
             }
-
+            else
+            {
+                this.saldo -= valor;
+                DateTime dataAtual = DateTime.Now;
+                this.movimentacoes.Add(new Extrato(dataAtual, "Saque", -valor));
+                return true;
+            }
         }
         public List<Extrato> Extrato()
         {
@@ -93,33 +94,34 @@ namespace dotnet_console_banco.Classes
         {
             this.credito = credito;
         }
-    
         public string[] Transferir(double valor, Pessoa contaDestino)
             {
                 string[] result = new string[2];
 
-                if(this.Sacar(valor)){
-
-                    if(contaDestino.Conta.Depositar(valor)){          //aqui devo passar a instância de conta...
+                if(this.Sacar(valor))
+                {
+                    if(contaDestino.Conta.Depositar(valor))
+                    {          //aqui devo passar a instância de conta...
                         result[0] = "true";
                         result[1] = "Transferência realizada com sucesso";
-
                         return result;
-
-                    } else {
+                    }
+                    else
+                    {
                         this.Extornar(valor);
                         result[0] = "Erro Conta Destino";
                         result[1] = "Erro[Conta Destino] ao tentar realizar transferência";
                         return result;
                     }
-
-                } else {
+                }
+                else
+                {
                     result[0] = "Erro Conta Origem";
                     result[1] = "Saldo Insuficiente";
                     return result;
                 }
             }
-            private void Extornar(double valor)
+        private void Extornar(double valor)
         {
             this.Depositar(valor);
         }
